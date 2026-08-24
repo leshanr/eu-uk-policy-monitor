@@ -160,13 +160,21 @@ def parse_feed(raw: bytes, source: dict) -> list[dict]:
             date = parse_date(_text(n.find(f"{ATOM}published")) or _text(n.find(f"{ATOM}updated")))
 
         title = strip_html(title)
+        summary = strip_html(summary)
+
+        # Some registers put a document code in <title> and the real subject in
+        # the description. For those, swap them so scoring sees real words.
+        if source.get("title_from_summary") and summary:
+            code, title = title, summary
+            summary = f"Document {code}" if code else ""
+
         if not title:
             continue
         items.append(
             {
                 "title": title,
                 "link": link.strip(),
-                "summary": strip_html(summary)[:600],
+                "summary": summary[:600],
                 "date": date,
                 "source": source["name"],
                 "source_id": source["id"],

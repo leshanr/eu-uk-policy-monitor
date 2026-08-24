@@ -1,14 +1,14 @@
 {
-  "_comment": "Nine EU and UK institutional feeds, all confirmed returning items on 24 Aug 2026. Tier 1 sources get a small scoring bonus over tier 2. Scope is deliberately EU + UK only.",
+  "_comment": "Ten EU and UK institutional feeds. Tier 1 sources get a small scoring bonus over tier 2. Scope is deliberately EU + UK only. EUR-Lex was removed on 24 Aug 2026: it returns 403 to GitHub's runners. The European Parliament feed is retained but returns empty to them for the same reason.",
   "sources": [
     {
-      "id": "eurlex-oj-l",
-      "name": "EUR-Lex — Official Journal L (adopted acts)",
-      "url": "https://eur-lex.europa.eu/EN/display-feed.rss?rssId=222",
+      "id": "council-register-er",
+      "name": "Council of the EU — external relations documents",
+      "url": "https://www.consilium.europa.eu/en/register/rss/THMER.xml",
       "tier": 1,
       "verified": true,
-      "default_type": "adopted",
-      "note": "The legal texts themselves. More predefined feeds at https://eur-lex.europa.eu/predefined-rss.html"
+      "title_from_summary": true,
+      "note": "Replaces EUR-Lex, which refuses GitHub's servers. Primary Council documents - decisions, regulations, conclusions - in the external relations file, which is where sanctions law lives. Titles arrive as document codes, so the parser swaps in the descriptive subject line."
     },
     {
       "id": "council-press",
@@ -72,6 +72,14 @@
       "tier": 2,
       "verified": true,
       "note": "Broad catch-all across departments. High volume, so the filter does the work."
+    },
+    {
+      "id": "defra",
+      "name": "DEFRA — food, farming and biosecurity",
+      "url": "https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs.atom",
+      "tier": 2,
+      "verified": false,
+      "note": "SPS checks and the border target operating model - the sharpest edge of EU-UK divergence. Same gov.uk pattern as the other four, but unconfirmed; check the health table."
     }
   ]
 }
