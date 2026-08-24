@@ -1,0 +1,47 @@
+name: Weekly policy monitor
+
+on:
+  schedule:
+    # 07:00 UTC every Monday — digest waiting before the working week starts.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Lookback window in days"
+        required: false
+        default: "8"
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Collect and build digest
+        run: python3 collect.py --days "${{ github.event.inputs.days || '8' }}"
+
+      - name: Add digest to the run summary
+        run: |
+          latest=$(ls -1 digests/*.md | tail -n 1)
+          echo "Latest digest: \`$latest\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          cat "$latest" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit digest and state
+        run: |
+          git config user.name "policy-monitor"
+          git config user.email "actions@github.com"
+          git add digests state
+          if git diff --staged --quiet; then
+            echo "Nothing new this week."
+          else
+            git commit -m "digest: $(date -u +%Y-%m-%d)"
+            git push
+          fi
