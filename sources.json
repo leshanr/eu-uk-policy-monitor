@@ -1,0 +1,77 @@
+{
+  "_comment": "Nine EU and UK institutional feeds, all confirmed returning items on 24 Aug 2026. Tier 1 sources get a small scoring bonus over tier 2. Scope is deliberately EU + UK only.",
+  "sources": [
+    {
+      "id": "eurlex-oj-l",
+      "name": "EUR-Lex — Official Journal L (adopted acts)",
+      "url": "https://eur-lex.europa.eu/EN/display-feed.rss?rssId=222",
+      "tier": 1,
+      "verified": true,
+      "default_type": "adopted",
+      "note": "The legal texts themselves. More predefined feeds at https://eur-lex.europa.eu/predefined-rss.html"
+    },
+    {
+      "id": "council-press",
+      "name": "Council of the EU — press releases",
+      "url": "https://www.consilium.europa.eu/en/rss/pressreleases.ashx",
+      "tier": 1,
+      "verified": true,
+      "note": "Where sanctions packages are actually adopted. Carries some French-language items; the noise list drops them."
+    },
+    {
+      "id": "ec-presscorner",
+      "name": "European Commission — press corner",
+      "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en&pagesize=50",
+      "tier": 1,
+      "verified": true
+    },
+    {
+      "id": "ep-press",
+      "name": "European Parliament — press releases",
+      "url": "https://www.europarl.europa.eu/rss/doc/press-releases/en.xml",
+      "tier": 1,
+      "verified": true,
+      "note": "Committee stages, votes and trilogue outcomes - the in-progress pipeline."
+    },
+    {
+      "id": "ofsi",
+      "name": "OFSI — financial sanctions (HM Treasury)",
+      "url": "https://www.gov.uk/government/organisations/office-of-financial-sanctions-implementation.atom",
+      "tier": 1,
+      "verified": true,
+      "note": "General licences, designations, enforcement. The single best UK sanctions source."
+    },
+    {
+      "id": "fcdo",
+      "name": "FCDO — sanctions and foreign policy",
+      "url": "https://www.gov.uk/government/organisations/foreign-commonwealth-development-office.atom",
+      "tier": 1,
+      "verified": true,
+      "note": "UK designations and the Sanctions List updates."
+    },
+    {
+      "id": "dbt",
+      "name": "Department for Business and Trade",
+      "url": "https://www.gov.uk/government/organisations/department-for-business-and-trade.atom",
+      "tier": 1,
+      "verified": true,
+      "note": "Export controls, trade remedies, and UKCA/CE marking - the divergence beat's UK end."
+    },
+    {
+      "id": "ukparl-bills",
+      "name": "UK Parliament — all bills",
+      "url": "https://bills.parliament.uk/rss/allbills.rss",
+      "tier": 1,
+      "verified": true,
+      "default_type": "in-progress"
+    },
+    {
+      "id": "govuk-news",
+      "name": "gov.uk — news and communications",
+      "url": "https://www.gov.uk/search/news-and-communications.atom",
+      "tier": 2,
+      "verified": true,
+      "note": "Broad catch-all across departments. High volume, so the filter does the work."
+    }
+  ]
+}

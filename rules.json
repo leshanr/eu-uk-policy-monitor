@@ -1,0 +1,131 @@
+{
+  "_comment": "Two beats, deliberately narrow. Title matches count double body matches. Tune this file, never collect.py.",
+  "window_days": 8,
+  "score_threshold": 6,
+  "max_per_theme": 5,
+  "max_items_total": 8,
+  "wider_catch_limit": 10,
+
+  "type_bonus": {
+    "adopted": 2,
+    "in-progress": 2,
+    "consultation": 1,
+    "announcement": 0
+  },
+
+  "type_patterns": {
+    "adopted": [
+      "regulation (eu)", "directive (eu)", "decision (eu)", "implementing regulation",
+      "delegated regulation", "council regulation", "commission notice", "royal assent",
+      "enters into force", "entry into force", "adopted by the council", "council adopts",
+      "statutory instrument", "comes into force"
+    ],
+    "in-progress": [
+      "proposal", "proposes", "draft", "first reading", "second reading", "third reading",
+      "committee stage", "report stage", "trilogue", "provisional agreement", "political agreement",
+      "meps vote", "meps back", "meps call", "negotiating mandate", "general approach",
+      "introduced in the", "bill", "amendment", "green paper", "white paper"
+    ],
+    "consultation": [
+      "consultation", "call for evidence", "call for input", "have your say",
+      "invites comments", "seeking views"
+    ]
+  },
+
+  "themes": [
+    {
+      "id": "eu-uk-divergence",
+      "name": "EU–UK divergence and the reset",
+      "why": "Where the two rulebooks move apart, and where the reset negotiations pull them back together. Systematically under-covered.",
+      "keywords": {
+        "regulatory divergence": 5,
+        "divergence": 4,
+        "retained eu law": 5,
+        "assimilated law": 5,
+        "windsor framework": 5,
+        "northern ireland protocol": 4,
+        "trade and cooperation agreement": 5,
+        "dynamic alignment": 5,
+        "sps agreement": 4,
+        "veterinary agreement": 4,
+        "eu-uk": 4,
+        "uk-eu": 4,
+        "eu reset": 4,
+        "mutual recognition": 3,
+        "conformity assessment": 4,
+        "ukca": 5,
+        "ce marking": 4,
+        "rules of origin": 4,
+        "level playing field": 3,
+        "data adequacy": 4,
+        "uk reach": 5,
+        "border target operating model": 5,
+        "subsidy control": 3,
+        "eu exit": 3,
+        "third country": 2,
+        "equivalence": 3,
+        "single market": 2,
+        "customs": 2
+      }
+    },
+    {
+      "id": "sanctions-econsec",
+      "name": "Sanctions and economic security",
+      "why": "Existing depth. The beat where the analysis can be better than anyone else's, not merely present.",
+      "keywords": {
+        "sanction": 4,
+        "sanctions package": 5,
+        "designation": 3,
+        "designated": 2,
+        "asset freeze": 5,
+        "general licence": 5,
+        "ofsi": 5,
+        "ofac": 3,
+        "export control": 5,
+        "dual-use": 5,
+        "circumvention": 5,
+        "evasion": 4,
+        "shadow fleet": 5,
+        "price cap": 4,
+        "frozen assets": 5,
+        "immobilised assets": 5,
+        "economic security": 4,
+        "national security and investment": 4,
+        "investment screening": 4,
+        "trade remedies": 3,
+        "anti-dumping": 3,
+        "secondary sanctions": 5,
+        "wind-down": 3,
+        "delisting": 3,
+        "sanctions list": 4,
+        "proscribed organisation": 4,
+        "counter-terrorism sanctions": 4,
+        "terrorist asset": 4,
+        "russia": 2,
+        "belarus": 2,
+        "iran": 2
+      }
+    }
+  ],
+
+  "noise": [
+    "weekly schedule of",
+    "annual round of visits",
+    "media advisory",
+    "press briefing",
+    "photo of the day",
+    "audiovisual",
+    "doorstep",
+    "vacancy",
+    "call for applications",
+    "correction:",
+    "privacy notice",
+    "official statistics:",
+    "intervention du",
+    "discours du",
+    "conférence de presse",
+    "déclaration de",
+    "remarks by",
+    "speech by"
+  ]
+}
