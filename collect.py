@@ -35,8 +35,8 @@ ROOT = Path(__file__).resolve().parent
 STATE_PATH = ROOT / "state" / "seen.json"
 DIGEST_DIR = ROOT / "digests"
 USER_AGENT = (
-    "Mozilla/5.0 (compatible; policy-monitor/1.0; "
-    "personal legislative monitoring; +https://github.com/)"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 )
 TIMEOUT = 30
 MAX_STATE = 4000  # keep the seen-store from growing without limit
@@ -140,7 +140,13 @@ def parse_feed(raw: bytes, source: dict) -> list[dict]:
             title = _text(n.find("title"))
             link = _text(n.find("link"))
             summary = _text(n.find("description"))
-            date = parse_date(_text(n.find("pubDate")) or _text(n.find("{http://purl.org/dc/elements/1.1/}date")))
+            date = parse_date(
+                _text(n.find("pubDate"))
+                or _text(n.find("{http://purl.org/dc/elements/1.1/}date"))
+                or _text(n.find(f"{ATOM}updated"))
+                or _text(n.find("date"))
+                or _text(n.find("published"))
+            )
         else:
             title = _text(n.find(f"{ATOM}title"))
             link = ""
@@ -193,32 +199,51 @@ def classify_type(item: dict, rules: dict, source: dict | None = None) -> str:
     return "announcement"
 
 
+_KW_CACHE: dict[str, "re.Pattern[str]"] = {}
+
+
+def _kw_pattern(kw: str) -> "re.Pattern[str]":
+    """Whole-word matcher, so 'divergence' does not match 'neurodivergence'."""
+    p = _KW_CACHE.get(kw)
+    if p is None:
+        body = re.escape(kw.lower())
+        prefix = r"\b" if kw[:1].isalnum() else ""
+        suffix = r"\b" if kw[-1:].isalnum() else ""
+        p = re.compile(prefix + body + suffix)
+        _KW_CACHE[kw] = p
+    return p
+
+
+def _theme_score(theme: dict, title: str, body: str) -> tuple[int, list[str]]:
+    subtotal, hits = 0, []
+    for kw, weight in theme["keywords"].items():
+        pat = _kw_pattern(kw)
+        if pat.search(title):
+            subtotal += weight * 2
+            hits.append(kw)
+        elif pat.search(body):
+            subtotal += weight
+            hits.append(kw)
+    return subtotal, hits
+
+
 def score_item(item: dict, rules: dict) -> tuple[int, list[str], list[str]]:
     title = item["title"].lower()
     body = item["summary"].lower()
-    haystack_title = " " + title + " "
-    haystack_body = " " + body + " "
 
     for n in rules.get("noise", []):
-        if n in haystack_title:
+        if n in title:
             return 0, [], []
 
     total = 0
     themes: list[str] = []
     hits: list[str] = []
     for theme in rules["themes"]:
-        subtotal = 0
-        for kw, weight in theme["keywords"].items():
-            k = kw.lower()
-            if k in haystack_title:
-                subtotal += weight * 2
-                hits.append(kw)
-            elif k in haystack_body:
-                subtotal += weight
-                hits.append(kw)
+        subtotal, theme_hits = _theme_score(theme, title, body)
         if subtotal:
             themes.append(theme["id"])
             total += subtotal
+            hits.extend(theme_hits)
 
     if total:
         # A tier-1 institutional source gets a small edge over commentary.
@@ -232,16 +257,10 @@ def score_item(item: dict, rules: dict) -> tuple[int, list[str], list[str]]:
 def primary_theme(item: dict, rules: dict) -> str | None:
     """Assign each item to the single theme it scores highest in."""
     best, best_id = 0, None
-    title = " " + item["title"].lower() + " "
-    body = " " + item["summary"].lower() + " "
+    title = item["title"].lower()
+    body = item["summary"].lower()
     for theme in rules["themes"]:
-        s = 0
-        for kw, weight in theme["keywords"].items():
-            k = kw.lower()
-            if k in title:
-                s += weight * 2
-            elif k in body:
-                s += weight
+        s, _ = _theme_score(theme, title, body)
         if s > best:
             best, best_id = s, theme["id"]
     return best_id

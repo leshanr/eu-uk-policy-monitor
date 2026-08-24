@@ -5,33 +5,61 @@
   "max_per_theme": 5,
   "max_items_total": 8,
   "wider_catch_limit": 10,
-
   "type_bonus": {
     "adopted": 2,
     "in-progress": 2,
     "consultation": 1,
     "announcement": 0
   },
-
   "type_patterns": {
     "adopted": [
-      "regulation (eu)", "directive (eu)", "decision (eu)", "implementing regulation",
-      "delegated regulation", "council regulation", "commission notice", "royal assent",
-      "enters into force", "entry into force", "adopted by the council", "council adopts",
-      "statutory instrument", "comes into force"
+      "regulation (eu)",
+      "directive (eu)",
+      "decision (eu)",
+      "implementing regulation",
+      "delegated regulation",
+      "council regulation",
+      "commission notice",
+      "royal assent",
+      "enters into force",
+      "entry into force",
+      "adopted by the council",
+      "council adopts",
+      "statutory instrument",
+      "comes into force"
     ],
     "in-progress": [
-      "proposal", "proposes", "draft", "first reading", "second reading", "third reading",
-      "committee stage", "report stage", "trilogue", "provisional agreement", "political agreement",
-      "meps vote", "meps back", "meps call", "negotiating mandate", "general approach",
-      "introduced in the", "bill", "amendment", "green paper", "white paper"
+      "proposal",
+      "proposes",
+      "draft",
+      "first reading",
+      "second reading",
+      "third reading",
+      "committee stage",
+      "report stage",
+      "trilogue",
+      "provisional agreement",
+      "political agreement",
+      "meps vote",
+      "meps back",
+      "meps call",
+      "negotiating mandate",
+      "general approach",
+      "introduced in the",
+      "bill",
+      "amendment",
+      "green paper",
+      "white paper"
     ],
     "consultation": [
-      "consultation", "call for evidence", "call for input", "have your say",
-      "invites comments", "seeking views"
+      "consultation",
+      "call for evidence",
+      "call for input",
+      "have your say",
+      "invites comments",
+      "seeking views"
     ]
   },
-
   "themes": [
     {
       "id": "eu-uk-divergence",
@@ -65,7 +93,9 @@
         "third country": 2,
         "equivalence": 3,
         "single market": 2,
-        "customs": 2
+        "customs": 2,
+        "regulatory alignment": 4,
+        "eu law": 3
       }
     },
     {
@@ -103,11 +133,16 @@
         "terrorist asset": 4,
         "russia": 2,
         "belarus": 2,
-        "iran": 2
+        "iran": 2,
+        "restrictive measures": 5,
+        "eu lists": 4,
+        "listings": 3,
+        "sanctions regime": 4,
+        "military-industrial": 3,
+        "arms embargo": 4
       }
     }
   ],
-
   "noise": [
     "weekly schedule of",
     "annual round of visits",
@@ -126,6 +161,9 @@
     "conférence de presse",
     "déclaration de",
     "remarks by",
-    "speech by"
+    "speech by",
+    "webinars and events",
+    "transparency data:",
+    "statement to the osce"
   ]
 }
