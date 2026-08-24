@@ -194,7 +194,9 @@ def classify_type(item: dict, rules: dict, source: dict | None = None) -> str:
 
     A source may declare a default_type; explicit title patterns still win over it.
     """
-    hay = " " + item["title"].lower() + " " + item["summary"].lower()[:200] + " "
+    # Title only. A press release that merely mentions a Council Decision is not
+    # itself the adopted act, and matching the summary made it look like one.
+    hay = " " + item["title"].lower() + " "
     patterns = rules.get("type_patterns", {})
     for label in ("consultation", "adopted", "in-progress"):
         for p in patterns.get(label, []):
