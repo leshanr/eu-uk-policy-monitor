@@ -31,8 +31,8 @@
       "name": "European Parliament — press releases",
       "url": "https://www.europarl.europa.eu/rss/doc/press-releases/en.xml",
       "tier": 1,
-      "verified": true,
-      "note": "Committee stages, votes and trilogue outcomes - the in-progress pipeline. Returned an empty body on the 24-25 Aug runs (\"no element found\"). When it does respond it is badly stale — newest item 12 Jun 2026 as of 26 Aug. Treat as unreliable; the committee feeds at https://www.europarl.europa.eu/at-your-service/en/stay-informed/rss-feeds may be better maintained."
+      "verified": false,
+      "note": "Committee stages, votes and trilogue outcomes - the in-progress pipeline. BROKEN as of 26 Aug 2026: returns an empty body on every run (\"no element found: line 1, column 0\"). The top-stories feed is worse — dead since 2023. Needs a replacement from https://www.europarl.europa.eu/at-your-service/en/stay-informed/rss-feeds ; until then the health table shows the failure on every run rather than hiding it."
     },
     {
       "id": "ofsi",
@@ -85,10 +85,10 @@
     {
       "id": "uk-sanctions-list",
       "name": "UK Sanctions List — designations and changes",
-      "url": "https://www.gov.uk/government/publications/the-uk-sanctions-list.atom",
+      "url": "https://www.gov.uk/search/news-and-communications.atom?keywords=sanctions",
       "tier": 1,
       "verified": false,
-      "note": "Added 26 Aug 2026. The OFSI feed carries general licences, guidance and FAQs; a new designation lands here. Endpoint unconfirmed — check the first run's health table, and if it fails fall back to https://www.gov.uk/search/all.atom?keywords=sanctions+list"
+      "note": "Designations, licences and enforcement notices across departments. The first attempt pointed at a publication page's .atom, which 404s — gov.uk only serves feeds from organisation and search paths. This uses the same search endpoint as govuk-news, narrowed by keyword; the local filter still does the real work, and in-run dedupe handles any overlap. Confirm in the next health table."
     },
     {
       "id": "dsit",
