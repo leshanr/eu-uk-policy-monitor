@@ -24,6 +24,9 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Verify the pipeline before trusting the run
+        run: python3 tests/test_offline.py
+
       - name: Collect and build digest
         run: python3 collect.py --days "${{ github.event.inputs.days || '8' }}"
 
