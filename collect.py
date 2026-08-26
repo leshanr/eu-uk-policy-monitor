@@ -304,7 +304,8 @@ def save_state(state: dict) -> None:
 # output
 # ----------------------------------------------------------------------------
 
-def render(groups: dict, wider: list, health: list, rules: dict, window: int, now: dt.datetime) -> str:
+def render(groups: dict, wider: list, health: list, rules: dict, window: int,
+           now: dt.datetime, dropped: int = 0) -> str:
     theme_names = {t["id"]: t["name"] for t in rules["themes"]}
     kept = sum(len(v) for v in groups.values()) + len(wider)
 
@@ -353,12 +354,34 @@ def render(groups: dict, wider: list, health: list, rules: dict, window: int, no
 
     out.append("## Source health")
     out.append("")
-    out.append("| Source | Status | Items |")
-    out.append("|---|---|---|")
+    stale = [h for h in health if h.get("stale")]
+    if stale:
+        out.append(
+            f"> **{len(stale)} of {len(health)} sources are stale.** They parse cleanly and "
+            f"report items, but nothing they hold is newer than the {window}-day window, so they "
+            "contributed nothing to this digest. A thin week may be a rotted source list rather "
+            "than a quiet fortnight — check this before concluding it was quiet."
+        )
+        out.append("")
+    out.append("| Source | Status | Items | Newest | Age |")
+    out.append("|---|---|---|---|---|")
     for h in health:
-        status = "ok" if h["ok"] else f"FAILED — {h['error']}"
-        out.append(f"| {h['name']} | {status} | {h['count']} |")
+        if not h["ok"]:
+            out.append(f"| {h['name']} | FAILED — {h['error']} | 0 | — | — |")
+            continue
+        status = "**STALE**" if h.get("stale") else "ok"
+        newest = f"{h['newest']:%d %b}" if h.get("newest") else "no dated items"
+        age = "—" if h.get("age") is None else f"{h['age']}d"
+        undated = f" ({h['undated']} undated)" if h.get("undated") else ""
+        out.append(f"| {h['name']} | {status} | {h['count']}{undated} | {newest} | {age} |")
     out.append("")
+    if dropped:
+        out.append(
+            f"*{dropped} item(s) carried no readable date and were treated as out-of-window. "
+            "A large number against one source means its feed uses a timestamp format the parser "
+            "does not yet read.*"
+        )
+        out.append("")
     return "\n".join(out)
 
 
@@ -383,30 +406,64 @@ def main() -> int:
     all_items: list[dict] = []
     health: list[dict] = []
 
+    stale_after = rules.get("stale_after_days", 21)
+
     for src in sources:
         try:
             raw = fetch(src["url"])
             items = parse_feed(raw, src)
-            health.append({"name": src["name"], "ok": True, "count": len(items), "error": ""})
+            dates = [i["date"] for i in items if i["date"]]
+            newest = max(dates) if dates else None
+            age = (now - newest).days if newest else None
+            health.append({
+                "name": src["name"], "ok": True, "count": len(items), "error": "",
+                "newest": newest, "age": age,
+                "undated": sum(1 for i in items if not i["date"]),
+                "stale": age is not None and age > stale_after,
+            })
             all_items.extend(items)
-            print(f"  ok   {src['id']}: {len(items)} items", file=sys.stderr)
+            flag = "  STALE" if (age is not None and age > stale_after) else ""
+            print(f"  ok   {src['id']}: {len(items)} items, "
+                  f"newest {age if age is not None else '?'}d old{flag}", file=sys.stderr)
         except Exception as e:  # noqa: BLE001
-            health.append({"name": src["name"], "ok": False, "count": 0, "error": str(e)[:120]})
+            health.append({
+                "name": src["name"], "ok": False, "count": 0, "error": str(e)[:120],
+                "newest": None, "age": None, "undated": 0, "stale": False,
+            })
             print(f"  FAIL {src['id']}: {e}", file=sys.stderr)
 
     if args.check:
         working = sum(1 for h in health if h["ok"])
+        stale_n = sum(1 for h in health if h["stale"])
         print(f"\n{working}/{len(health)} sources returned a parseable feed.")
+        if stale_n:
+            print(f"{stale_n} of those have published nothing in over {stale_after} days — "
+                  f"they parse, but they add nothing to a {window}-day digest.")
+        print()
         for h in health:
-            print(f"  {'ok  ' if h['ok'] else 'FAIL'}  {h['name']}  ({h['count']} items) {h['error']}")
+            if not h["ok"]:
+                print(f"  FAIL   {h['name'][:48]:<48}  {h['error']}")
+                continue
+            age = "no dated items" if h["age"] is None else f"newest {h['age']:>3}d old"
+            mark = "STALE" if h["stale"] else "ok   "
+            und = f"  ({h['undated']} undated)" if h["undated"] else ""
+            print(f"  {mark}  {h['name'][:48]:<48}  {h['count']:>3} items, {age}{und}")
         return 0 if working else 1
 
     state = {"seen": []} if args.no_state else load_state()
     seen = set(state.get("seen", []))
 
     fresh = []
+    undated_dropped = 0
     for it in all_items:
-        if it["date"] and it["date"] < cutoff:
+        # An item with no readable date used to skip the window check entirely and
+        # so always counted as fresh — one static feed could carry a whole run.
+        # Undated now means out-of-window, and the count is reported in the digest
+        # so a feed that goes fully undated is visible rather than silent.
+        if it["date"] is None:
+            undated_dropped += 1
+            continue
+        if it["date"] < cutoff:
             continue
         key = item_key(it)
         if key in seen:
@@ -456,7 +513,7 @@ def main() -> int:
             wider.append(it)
 
     wider = wider[: rules.get("wider_catch_limit", 12)]
-    digest = render(groups, wider, health, rules, window, now)
+    digest = render(groups, wider, health, rules, window, now, undated_dropped)
 
     if args.dry_run:
         print(digest)

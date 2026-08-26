@@ -3,7 +3,7 @@
 A weekly legislative and regulatory monitoring pipeline covering two beats:
 **EU–UK regulatory divergence** and **sanctions and economic security**.
 
-It reads nine official EU and UK feeds, filters them against weighted keyword rules,
+It reads twelve official EU and UK feeds, filters them against weighted keyword rules,
 labels each item by what it actually is — adopted law, live legislation, consultation,
 announcement — and produces a short digest to edit into a published brief.
 
@@ -56,7 +56,9 @@ sources.json  →  fetch  →  parse (RSS + Atom)  →  window + dedupe  →  cl
                                                   state/seen.json                  rules.json
 ```
 
-**`sources.json`** — nine feeds, every one confirmed live during setup. Tier 1
+**`sources.json`** — twelve feeds. `verified` means the endpoint parses; it says
+nothing about whether the feed is still being updated, so read the **Age** column in
+the digest's health table for that. Tier 1
 (institutional primary sources) get a small scoring bonus over tier 2.
 
 **`rules.json`** — the actual intelligence of the thing. Two themes of weighted
@@ -85,6 +87,33 @@ in `rules.json`, falling back to a source's `default_type`:
 `ADOPTED` and `IN PROGRESS` items get a scoring bonus, so legal texts and live
 legislation outrank announcements about them.
 
+### A feed that parses is not a feed that works
+
+The most useful thing this pipeline does is tell you when a source has quietly stopped
+publishing. Two of the EU feeds parse cleanly, report items, and read as "ok" — while
+having published nothing for four and eleven weeks respectively. A thin week may be a
+thin week, or it may be a source list that has rotted.
+
+The health table carries a **newest-item age** column and flags anything older than
+`stale_after_days` (default 21) as **STALE**, in `--check` and in every digest. Check
+that column before concluding it was quiet in Brussels.
+
+### The brief
+
+`briefs/TEMPLATE.md` is the structure of an issue with its word budget.
+`briefs/000-worked-example.md` walks one real item from digest line to published
+paragraph — the difference between reporting that something was published and saying
+what changed for whom. `briefs/TUNING-LOG.md` records every miss and its fix; it is the
+most credible file in the repo, because it is the one that admits what the filter cannot
+see.
+
+### Tests
+
+`python3 tests/test_offline.py` — 22 checks, no network, run in CI before the collector.
+It scores real headlines from the live feeds against the real `rules.json` and requires
+each to clear the threshold, and requires genuinely off-beat items to score zero. Prune a
+keyword and the test tells you what stopped being caught.
+
 ### Tuning
 
 Tune `rules.json`, not `collect.py`. If a week returns too much, raise
@@ -111,7 +140,7 @@ mechanics of it.
 circumvention and shadow-fleet evasion, immobilised assets, investment screening.
 Where the analysis can be better than anyone else's rather than merely present.
 
-Nine sources feed both: EUR-Lex OJ L, the Council (where sanctions packages are
+Twelve sources feed both: the Council register and press feeds (where sanctions packages are
 actually adopted), the Commission, the European Parliament, OFSI, FCDO, DBT, UK
 Parliament bills, and gov.uk.
 
@@ -135,7 +164,7 @@ The digest is raw material. The edit is the job.
    on Y" reads as analysis. Overclaiming reads as a student blog.
 
 In applications: *I run a fortnightly EU–UK regulatory divergence and sanctions brief,
-built on an automated monitoring pipeline of nine institutional sources — here is the
+built on an automated monitoring pipeline of twelve institutional sources — here is the
 archive.*
 
 ---

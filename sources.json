@@ -1,5 +1,5 @@
 {
-  "_comment": "Ten EU and UK institutional feeds. Tier 1 sources get a small scoring bonus over tier 2. Scope is deliberately EU + UK only. EUR-Lex was removed on 24 Aug 2026: it returns 403 to GitHub's runners. The European Parliament feed is retained but returns empty to them for the same reason.",
+  "_comment": "Ten EU and UK institutional feeds. Tier 1 sources get a small scoring bonus over tier 2. Scope is deliberately EU + UK only. EUR-Lex was removed on 24 Aug 2026: it returns 403 to GitHub's runners. The European Parliament feed is retained but returns empty to them for the same reason. 'verified' means the endpoint parses; it says nothing about whether the feed is still being updated — read the Age column in the digest's health table for that.",
   "sources": [
     {
       "id": "council-register-er",
@@ -23,7 +23,8 @@
       "name": "European Commission — press corner",
       "url": "https://ec.europa.eu/commission/presscorner/api/rss?language=en&pagesize=50",
       "tier": 1,
-      "verified": true
+      "verified": true,
+      "note": "Checked 26 Aug 2026: parses, but newest item was 31 Jul — four weeks stale. The staleness column in the health table will now say so on every run."
     },
     {
       "id": "ep-press",
@@ -31,7 +32,7 @@
       "url": "https://www.europarl.europa.eu/rss/doc/press-releases/en.xml",
       "tier": 1,
       "verified": true,
-      "note": "Committee stages, votes and trilogue outcomes - the in-progress pipeline."
+      "note": "Committee stages, votes and trilogue outcomes - the in-progress pipeline. Returned an empty body on the 24-25 Aug runs (\"no element found\"). When it does respond it is badly stale — newest item 12 Jun 2026 as of 26 Aug. Treat as unreliable; the committee feeds at https://www.europarl.europa.eu/at-your-service/en/stay-informed/rss-feeds may be better maintained."
     },
     {
       "id": "ofsi",
@@ -80,6 +81,22 @@
       "tier": 2,
       "verified": false,
       "note": "SPS checks and the border target operating model - the sharpest edge of EU-UK divergence. Same gov.uk pattern as the other four, but unconfirmed; check the health table."
+    },
+    {
+      "id": "uk-sanctions-list",
+      "name": "UK Sanctions List — designations and changes",
+      "url": "https://www.gov.uk/government/publications/the-uk-sanctions-list.atom",
+      "tier": 1,
+      "verified": false,
+      "note": "Added 26 Aug 2026. The OFSI feed carries general licences, guidance and FAQs; a new designation lands here. Endpoint unconfirmed — check the first run's health table, and if it fails fall back to https://www.gov.uk/search/all.atom?keywords=sanctions+list"
+    },
+    {
+      "id": "dsit",
+      "name": "DSIT — science, innovation and technology",
+      "url": "https://www.gov.uk/government/organisations/department-for-science-innovation-and-technology.atom",
+      "tier": 2,
+      "verified": true,
+      "note": "Added 26 Aug 2026, confirmed live (newest item 24 Aug). Carries the cyber and digital file, which is a divergence story before it is a tech story — the Cyber Security and Resilience Bill is the current example."
     }
   ]
 }
