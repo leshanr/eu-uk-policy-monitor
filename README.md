@@ -11,31 +11,6 @@ Standard library Python only. No dependencies, no API keys, no paid tiers.
 
 ---
 
-## Why it exists
-
-Public affairs job specs ask for "experience of providing a legislative and policy
-monitoring service". This is that service, run on your own account, in public. The
-repo is the evidence; the published brief is the product.
-
----
-
-## Setup (about 10 minutes)
-
-1. Create a new **public** repository on GitHub — public matters, it is the thing
-   you link to in applications.
-2. Upload these files, keeping the folder structure. **`.github` is a hidden folder** —
-   on Windows turn on View → Show → Hidden items, on macOS press **Cmd+Shift+.** in
-   Finder, before selecting everything. If it still doesn't upload, create it in the
-   browser: **Add file → Create new file**, name it `.github/workflows/weekly.yml`,
-   paste the contents in, commit.
-3. **Settings → Actions → General → Workflow permissions → Read and write permissions**,
-   then Save. Skip this and the job runs but silently saves nothing.
-4. **Actions** tab → *Weekly policy monitor* → **Run workflow**. This is the first
-   time anything touches a live feed.
-5. Open the run summary. It prints the digest and, at the bottom, a **source health**
-   table showing which feeds worked.
-
-After that it runs itself every Monday at 07:00 UTC and commits the new digest.
 
 ### Running it locally
 
